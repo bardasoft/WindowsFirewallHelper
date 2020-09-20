@@ -21,81 +21,53 @@ namespace WindowsFirewallHelper
         /// <inheritdoc />
         public bool BlockAllInboundTraffic
         {
-            get => _firewall.UnderlyingObject.get_BlockAllInboundTraffic(_profileType);
-            set => _firewall.UnderlyingObject.set_BlockAllInboundTraffic(_profileType, value);
+            get => _firewall.UnderlyingObject.BlockAllInboundTraffic[_profileType];
+            set => _firewall.UnderlyingObject.BlockAllInboundTraffic[_profileType] = value;
         }
 
         /// <inheritdoc />
         public FirewallAction DefaultInboundAction
         {
-            get => _firewall.UnderlyingObject.get_DefaultInboundAction(_profileType) == NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                ? FirewallAction.Allow
-                : FirewallAction.Block;
-            set => _firewall.UnderlyingObject.set_DefaultInboundAction(
-                _profileType,
-                value == FirewallAction.Allow
-                    ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                    : NET_FW_ACTION.NET_FW_ACTION_BLOCK
-            );
+            get => (FirewallAction)_firewall.UnderlyingObject.DefaultInboundAction[_profileType];
+            set => _firewall.UnderlyingObject.DefaultInboundAction[_profileType] = (NET_FW_ACTION)value;
         }
 
         /// <inheritdoc />
         public FirewallAction DefaultOutboundAction
         {
-            get => _firewall.UnderlyingObject.get_DefaultOutboundAction(_profileType) == NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                ? FirewallAction.Allow
-                : FirewallAction.Block;
-            set => _firewall.UnderlyingObject.set_DefaultOutboundAction(
-                _profileType,
-                value == FirewallAction.Allow
-                    ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                    : NET_FW_ACTION.NET_FW_ACTION_BLOCK
-            );
+            get => (FirewallAction)_firewall.UnderlyingObject.DefaultOutboundAction[_profileType];
+            set => _firewall.UnderlyingObject.DefaultOutboundAction[_profileType] = (NET_FW_ACTION)value;
         }
 
         /// <inheritdoc />
         public bool Enable
         {
-            get => _firewall.UnderlyingObject.get_FirewallEnabled(_profileType);
-            set => _firewall.UnderlyingObject.set_FirewallEnabled(_profileType, value);
+            get => _firewall.UnderlyingObject.FirewallEnabled[_profileType];
+            set => _firewall.UnderlyingObject.FirewallEnabled[_profileType] = value;
         }
 
         /// <inheritdoc />
-        public bool IsActive
-        {
-            get => (NET_FW_PROFILE_TYPE2) _firewall.UnderlyingObject.CurrentProfileTypes ==
-                   NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL ||
+        public bool IsActive => _firewall.UnderlyingObject.CurrentProfileTypes == NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL ||
                    // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
-                   ((NET_FW_PROFILE_TYPE2) _firewall.UnderlyingObject.CurrentProfileTypes & _profileType) == _profileType;
-        }
+                   (_firewall.UnderlyingObject.CurrentProfileTypes & _profileType) == _profileType;
 
         /// <inheritdoc />
         public bool ShowNotifications
         {
-            get => !_firewall.UnderlyingObject.get_NotificationsDisabled(_profileType);
-            set => _firewall.UnderlyingObject.set_NotificationsDisabled(_profileType, !value);
+            get => !_firewall.UnderlyingObject.NotificationsDisabled[_profileType];
+            set => _firewall.UnderlyingObject.NotificationsDisabled[_profileType] = !value;
         }
 
         /// <inheritdoc />
-        public FirewallProfiles Type
-        {
-            get
-            {
-                if (_profileType == NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                return (FirewallProfiles) _profileType;
-            }
-        }
-
+        public FirewallProfiles Type => _profileType != NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL
+                    ? (FirewallProfiles)_profileType
+                    : throw new ArgumentOutOfRangeException();
 
         /// <inheritdoc />
         public bool UnicastResponsesToMulticastBroadcast
         {
-            get => !_firewall.UnderlyingObject.get_UnicastResponsesToMulticastBroadcastDisabled(_profileType);
-            set => _firewall.UnderlyingObject.set_UnicastResponsesToMulticastBroadcastDisabled(_profileType, !value);
+            get => !_firewall.UnderlyingObject.UnicastResponsesToMulticastBroadcastDisabled[_profileType];
+            set => _firewall.UnderlyingObject.UnicastResponsesToMulticastBroadcastDisabled[_profileType] = !value;
         }
 
         /// <inheritdoc />
