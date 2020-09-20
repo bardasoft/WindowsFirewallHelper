@@ -1,18 +1,18 @@
 ﻿using System;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper.Collections
 {
     internal class FirewallLegacyPortCollectionKey : IEquatable<FirewallLegacyPortCollectionKey>
     {
-        public FirewallLegacyPortCollectionKey(int portNumber, NetFwIPProtocol protocolType)
+        public FirewallLegacyPortCollectionKey(int portNumber, NET_FW_IP_PROTOCOL protocolType)
         {
             PortNumber = portNumber;
             ProtocolType = protocolType;
         }
 
         public int PortNumber { get; }
-        public NetFwIPProtocol ProtocolType { get; }
+        public NET_FW_IP_PROTOCOL ProtocolType { get; }
 
         /// <inheritdoc />
         public bool Equals(FirewallLegacyPortCollectionKey other)

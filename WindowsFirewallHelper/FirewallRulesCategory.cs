@@ -1,4 +1,4 @@
-﻿using WindowsFirewallHelper.COMInterop;
+﻿using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -10,21 +10,21 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     Boot category
         /// </summary>
-        Boot = NetFwRuleCategory.Boot,
+        Boot = NET_FW_RULE_CATEGORY.NET_FW_RULE_CATEGORY_BOOT,
 
         /// <summary>
         ///     Stealth category
         /// </summary>
-        Stealth = NetFwRuleCategory.Stealth,
+        Stealth = NET_FW_RULE_CATEGORY.NET_FW_RULE_CATEGORY_STEALTH,
 
         /// <summary>
         ///     Firewall rules
         /// </summary>
-        Firewall = NetFwRuleCategory.Firewall,
+        Firewall = NET_FW_RULE_CATEGORY.NET_FW_RULE_CATEGORY_FIREWALL,
 
         /// <summary>
         ///     IPSec rules
         /// </summary>
-        ConnectionSecurity = NetFwRuleCategory.ConnectionSecurity
+        ConnectionSecurity = NET_FW_RULE_CATEGORY.NET_FW_RULE_CATEGORY_CONSEC
     }
 }

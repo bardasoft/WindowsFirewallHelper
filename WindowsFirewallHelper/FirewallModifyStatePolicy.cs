@@ -1,4 +1,4 @@
-﻿using WindowsFirewallHelper.COMInterop;
+﻿using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -10,16 +10,16 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     All modifications take effects immediately
         /// </summary>
-        Ok = NetFwModifyState.Ok,
+        Ok = NET_FW_MODIFY_STATE.NET_FW_MODIFY_STATE_OK,
 
         /// <summary>
         ///     Firewall is controlled by group policy
         /// </summary>
-        OverrodeByGroupPolicy = NetFwModifyState.GroupPolicyOverride,
+        OverrodeByGroupPolicy = NET_FW_MODIFY_STATE.NET_FW_MODIFY_STATE_GP_OVERRIDE,
 
         /// <summary>
         ///     All inbound traffic is blocked regardless of registered rules
         /// </summary>
-        InboundBlocked = NetFwModifyState.InboundBlocked
+        InboundBlocked = NET_FW_MODIFY_STATE.NET_FW_MODIFY_STATE_INBOUND_BLOCKED
     }
 }

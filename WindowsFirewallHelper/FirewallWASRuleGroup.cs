@@ -91,7 +91,7 @@ namespace WindowsFirewallHelper
         /// <param name="profiles">The firewall profile to disable rules in</param>
         public void DisableRuleGroup(FirewallProfiles profiles)
         {
-            _firewall.UnderlyingObject.EnableRuleGroup((int) profiles, Name, false);
+            _firewall.UnderlyingObject.EnableRuleGroup((Vanara.PInvoke.FirewallApi.NET_FW_PROFILE_TYPE2) profiles, Name, false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace WindowsFirewallHelper
         /// <param name="profiles">The firewall profile to enable rules in</param>
         public void EnableRuleGroup(FirewallProfiles profiles)
         {
-            _firewall.UnderlyingObject.EnableRuleGroup((int) profiles, Name, true);
+            _firewall.UnderlyingObject.EnableRuleGroup((Vanara.PInvoke.FirewallApi.NET_FW_PROFILE_TYPE2) profiles, Name, true);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace WindowsFirewallHelper
         /// <returns>true if rules are enable; otherwise false.</returns>
         public bool IsRuleGroupEnable(FirewallProfiles profiles)
         {
-            return _firewall.UnderlyingObject.IsRuleGroupEnabled((int) profiles, Name);
+            return _firewall.UnderlyingObject.IsRuleGroupEnabled((Vanara.PInvoke.FirewallApi.NET_FW_PROFILE_TYPE2) profiles, Name);
         }
     }
 }

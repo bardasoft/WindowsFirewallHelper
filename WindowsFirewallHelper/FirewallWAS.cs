@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using WindowsFirewallHelper.Collections;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.FirewallRules;
 using WindowsFirewallHelper.InternalHelpers;
@@ -22,13 +22,13 @@ namespace WindowsFirewallHelper
         /// </summary>
         public FirewallWAS()
         {
-            UnderlyingObject = ComHelper.CreateInstance<INetFwPolicy2>();
+            UnderlyingObject = new INetFwPolicy2();
 
             Profiles = new ReadOnlyCollection<FirewallWASProfile>(new[]
             {
-                new FirewallWASProfile(this, NetFwProfileType2.Domain),
-                new FirewallWASProfile(this, NetFwProfileType2.Private),
-                new FirewallWASProfile(this, NetFwProfileType2.Public)
+                new FirewallWASProfile(this, NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_DOMAIN),
+                new FirewallWASProfile(this, NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_PRIVATE),
+                new FirewallWASProfile(this, NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_PUBLIC)
             });
         }
 
@@ -71,7 +71,7 @@ namespace WindowsFirewallHelper
             {
                 return Rules
                     .Select(rule => rule.Grouping)
-                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Where(s => !string.IsNullOrEmpty(s?.Trim()))
                     .Distinct()
                     .Select(s => new FirewallWASRuleGroup(this, s));
             }

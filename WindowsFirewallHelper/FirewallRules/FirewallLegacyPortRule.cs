@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WindowsFirewallHelper.Addresses;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.InternalHelpers;
 
@@ -37,7 +37,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 {
                     UnderlyingObjects.Add(
                         profile,
-                        new[] {ComHelper.CreateInstance<INetFwOpenPort>()}
+                        new[] {new INetFwOpenPort()}
                     );
                 }
             }
@@ -263,7 +263,7 @@ namespace WindowsFirewallHelper.FirewallRules
 
                 foreach (var openPort in UnderlyingObjects.Values.SelectMany(p => p))
                 {
-                    openPort.Protocol = (NetFwIPProtocol) value.ProtocolNumber;
+                    openPort.Protocol = (NET_FW_IP_PROTOCOL) value.ProtocolNumber;
                 }
             }
         }
@@ -312,7 +312,7 @@ namespace WindowsFirewallHelper.FirewallRules
 
                     foreach (var openPort in UnderlyingObjects.Values.SelectMany(p => p))
                     {
-                        openPort.Scope = NetFwScope.LocalSubnet;
+                        openPort.Scope = NET_FW_SCOPE.NET_FW_SCOPE_LOCAL_SUBNET;
                     }
                 }
                 else if (value == FirewallScope.All)
@@ -321,7 +321,7 @@ namespace WindowsFirewallHelper.FirewallRules
 
                     foreach (var openPort in UnderlyingObjects.Values.SelectMany(p => p))
                     {
-                        openPort.Scope = NetFwScope.All;
+                        openPort.Scope = NET_FW_SCOPE.NET_FW_SCOPE_ALL;
                     }
                 }
                 else

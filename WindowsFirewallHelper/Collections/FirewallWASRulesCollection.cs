@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.FirewallRules;
 using WindowsFirewallHelper.InternalHelpers.Collections;
 
@@ -55,12 +55,7 @@ namespace WindowsFirewallHelper.Collections
         /// <inheritdoc />
         protected override INetFwRule ConvertManagedToNative(TManaged managed)
         {
-            if (!(managed is FirewallWASRule))
-            {
-                throw new ArgumentException("Passed argument is invalid.", nameof(managed));
-            }
-
-            return (managed as FirewallWASRule).GetCOMObject();
+            return managed is FirewallWASRule rule ? rule.GetCOMObject() : throw new ArgumentException("Passed argument is invalid.", nameof(managed));
         }
 
         /// <inheritdoc />
@@ -90,12 +85,6 @@ namespace WindowsFirewallHelper.Collections
         protected override string GetCollectionKey(TManaged managed)
         {
             return ConvertManagedToNative(managed).Name;
-        }
-
-        /// <inheritdoc />
-        protected override IEnumVARIANT GetEnumVariant()
-        {
-            return NativeEnumerable.GetEnumeratorVariant();
         }
 
         /// <inheritdoc />

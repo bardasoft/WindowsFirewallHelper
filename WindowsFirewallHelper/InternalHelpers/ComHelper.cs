@@ -6,7 +6,7 @@ namespace WindowsFirewallHelper.InternalHelpers
     // ReSharper disable once HollowTypeName
     internal static class ComHelper
     {
-        public static T CreateInstance<T>()
+        public static T CreateInstance<T>() where T : class, new()
         {
             if (!IsSupported<T>())
             {
@@ -15,24 +15,25 @@ namespace WindowsFirewallHelper.InternalHelpers
 
             try
             {
-                var progId = ComClassProgIdAttribute.GetClassProgId<T>();
+                return new T();
+                //var progId = ComClassProgIdAttribute.GetClassProgId<T>();
 
-                if (!string.IsNullOrWhiteSpace(progId))
-                {
-                    var typeByProgId = Type.GetTypeFromProgID(progId, false);
+                //if (!string.IsNullOrEmpty(progId?.Trim()))
+                //{
+                //    var typeByProgId = Type.GetTypeFromProgID(progId, false);
 
-                    if (typeByProgId != null)
-                    {
-                        return (T) Activator.CreateInstance(typeByProgId);
-                    }
-                }
+                //    if (typeByProgId != null)
+                //    {
+                //        return (T) Activator.CreateInstance(typeByProgId);
+                //    }
+                //}
 
-                var typeByClassId = Type.GetTypeFromCLSID(typeof(T).GUID, false);
+                //var typeByClassId = Type.GetTypeFromCLSID(typeof(T).GUID, false);
 
-                if (typeByClassId != null)
-                {
-                    return (T) Activator.CreateInstance(typeByClassId);
-                }
+                //if (typeByClassId != null)
+                //{
+                //    return (T) Activator.CreateInstance(typeByClassId);
+                //}
             }
             catch (COMException e)
             {
@@ -55,13 +56,13 @@ namespace WindowsFirewallHelper.InternalHelpers
                 return false;
             }
 
-            var progId = ComClassProgIdAttribute.GetClassProgId<T>();
+            //var progId = ComClassProgIdAttribute.GetClassProgId<T>();
 
-            if (!string.IsNullOrWhiteSpace(progId) &&
-                Type.GetTypeFromProgID(progId, false) == null)
-            {
-                return false;
-            }
+            //if (!string.IsNullOrEmpty(progId?.Trim()) &&
+            //    Type.GetTypeFromProgID(progId, false) == null)
+            //{
+            //    return false;
+            //}
 
             return true;
         }

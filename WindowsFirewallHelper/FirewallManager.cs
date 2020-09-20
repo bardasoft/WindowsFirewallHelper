@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
 using WindowsFirewallHelper.Collections;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.FirewallRules;
 using WindowsFirewallHelper.InternalHelpers;
 
@@ -113,7 +113,7 @@ namespace WindowsFirewallHelper
                 throw new NotSupportedException();
             }
 
-            return ComHelper.CreateInstance<INetFwProducts>();
+            return new INetFwProducts();
         }
     }
 }

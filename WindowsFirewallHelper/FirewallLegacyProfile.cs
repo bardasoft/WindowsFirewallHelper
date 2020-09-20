@@ -1,5 +1,5 @@
 ﻿using WindowsFirewallHelper.Collections;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 
 namespace WindowsFirewallHelper
@@ -103,14 +103,14 @@ namespace WindowsFirewallHelper
             set => UnderlyingObject.UnicastResponsesToMulticastBroadcastDisabled = !value;
         }
 
-        private static FirewallProfiles GetManagedProfileType(NetFwProfileType profile)
+        private static FirewallProfiles GetManagedProfileType(NET_FW_PROFILE_TYPE profile)
         {
             switch (profile)
             {
-                case NetFwProfileType.Domain:
+                case NET_FW_PROFILE_TYPE.NET_FW_PROFILE_DOMAIN:
 
                     return FirewallProfiles.Domain;
-                case NetFwProfileType.Standard:
+                case NET_FW_PROFILE_TYPE.NET_FW_PROFILE_STANDARD:
 
                     return FirewallProfiles.Private;
                 default:
@@ -119,16 +119,16 @@ namespace WindowsFirewallHelper
             }
         }
 
-        private static NetFwProfileType GetNativeProfileType(FirewallProfiles profile)
+        private static NET_FW_PROFILE_TYPE GetNativeProfileType(FirewallProfiles profile)
         {
             switch (profile)
             {
                 case FirewallProfiles.Domain:
 
-                    return NetFwProfileType.Domain;
+                    return NET_FW_PROFILE_TYPE.NET_FW_PROFILE_DOMAIN;
                 case FirewallProfiles.Private:
 
-                    return NetFwProfileType.Standard;
+                    return NET_FW_PROFILE_TYPE.NET_FW_PROFILE_STANDARD;
                 default:
 
                     throw new FirewallLegacyNotSupportedException();

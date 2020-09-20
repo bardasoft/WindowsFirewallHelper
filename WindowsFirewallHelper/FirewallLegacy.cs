@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using WindowsFirewallHelper.Collections;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.FirewallRules;
 using WindowsFirewallHelper.InternalHelpers;
@@ -26,7 +26,7 @@ namespace WindowsFirewallHelper
                 throw new NotSupportedException("This type is not supported in this environment.");
             }
 
-            UnderlyingObject = ComHelper.CreateInstance<INetFwMgr>();
+            UnderlyingObject = new INetFwMgr();
 
             Profiles = new ReadOnlyCollection<FirewallLegacyProfile>(new[]
             {

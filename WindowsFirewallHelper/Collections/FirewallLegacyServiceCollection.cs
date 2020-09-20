@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.InternalHelpers.Collections;
 
 namespace WindowsFirewallHelper.Collections
 {
     internal class FirewallLegacyServiceCollection :
-        ComNativeCollectionBase<INetFwServices, INetFwService, NetFwServiceType>
+        ComNativeCollectionBase<INetFwServices, INetFwService, NET_FW_SERVICE_TYPE>
     {
         public FirewallLegacyServiceCollection(INetFwServices servicesCollection) :
             base(servicesCollection)
@@ -19,15 +19,9 @@ namespace WindowsFirewallHelper.Collections
         public override bool IsReadOnly { get; } = true;
 
         /// <inheritdoc />
-        protected override NetFwServiceType GetCollectionKey(INetFwService managed)
+        protected override NET_FW_SERVICE_TYPE GetCollectionKey(INetFwService managed)
         {
             return managed.Type;
-        }
-
-        /// <inheritdoc />
-        protected override IEnumVARIANT GetEnumVariant()
-        {
-            return NativeEnumerable.GetEnumeratorVariant();
         }
 
         /// <inheritdoc />
@@ -43,7 +37,7 @@ namespace WindowsFirewallHelper.Collections
         }
 
         /// <inheritdoc />
-        protected override INetFwService InternalItem(NetFwServiceType key)
+        protected override INetFwService InternalItem(NET_FW_SERVICE_TYPE key)
         {
             try
             {
@@ -56,7 +50,7 @@ namespace WindowsFirewallHelper.Collections
         }
 
         /// <inheritdoc />
-        protected override void InternalRemove(NetFwServiceType key)
+        protected override void InternalRemove(NET_FW_SERVICE_TYPE key)
         {
             throw new InvalidOperationException();
         }

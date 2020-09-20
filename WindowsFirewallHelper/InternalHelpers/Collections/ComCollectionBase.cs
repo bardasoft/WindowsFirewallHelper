@@ -210,21 +210,12 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
         /// <inheritdoc />
         public virtual IEnumerator<TManaged> GetEnumerator()
         {
-            // ReSharper disable once EventExceptionNotDocumented
-            var enumVariant = GetEnumVariant();
-
-            if (enumVariant == null)
-            {
-                throw new NotSupportedException("This operation is not supported with the passed COM object.");
-            }
-
-            return new ComEnumerator<TNative, TManaged>(enumVariant, ConvertNativeToManaged);
+            return NativeEnumerable.OfType<TNative>().Select(ConvertNativeToManaged).GetEnumerator();
         }
 
         protected abstract TNative ConvertManagedToNative(TManaged managed);
         protected abstract TManaged ConvertNativeToManaged(TNative native);
         protected abstract TKey GetCollectionKey(TManaged managed);
-        protected abstract IEnumVARIANT GetEnumVariant();
         protected abstract void InternalAdd(TNative native);
         protected abstract int InternalCount();
         protected abstract TNative InternalItem(TKey key);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WindowsFirewallHelper.Addresses;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.InternalHelpers;
 
@@ -37,7 +37,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 {
                     UnderlyingObjects.Add(
                         profile,
-                        new[] {ComHelper.CreateInstance<INetFwAuthorizedApplication>()}
+                        new[] {new INetFwAuthorizedApplication()}
                     );
                 }
             }
@@ -264,7 +264,7 @@ namespace WindowsFirewallHelper.FirewallRules
 
                     foreach (var authorizedApplication in UnderlyingObjects.Values.SelectMany(a => a))
                     {
-                        authorizedApplication.Scope = NetFwScope.LocalSubnet;
+                        authorizedApplication.Scope = NET_FW_SCOPE.NET_FW_SCOPE_LOCAL_SUBNET;
                     }
                 }
                 else if (value == FirewallScope.All)
@@ -273,7 +273,7 @@ namespace WindowsFirewallHelper.FirewallRules
 
                     foreach (var authorizedApplication in UnderlyingObjects.Values.SelectMany(a => a))
                     {
-                        authorizedApplication.Scope = NetFwScope.All;
+                        authorizedApplication.Scope = NET_FW_SCOPE.NET_FW_SCOPE_ALL;
                     }
                 }
                 else

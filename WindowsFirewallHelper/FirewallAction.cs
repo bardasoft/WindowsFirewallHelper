@@ -1,4 +1,4 @@
-﻿using WindowsFirewallHelper.COMInterop;
+﻿using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -10,11 +10,11 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     Block rule
         /// </summary>
-        Block = NetFwAction.Block,
+        Block = NET_FW_ACTION.NET_FW_ACTION_BLOCK,
 
         /// <summary>
         ///     Allow rule
         /// </summary>
-        Allow = NetFwAction.Allow
+        Allow = NET_FW_ACTION.NET_FW_ACTION_ALLOW
     }
 }

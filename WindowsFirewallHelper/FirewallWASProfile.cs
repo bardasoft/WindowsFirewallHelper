@@ -1,5 +1,5 @@
 ﻿using System;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -9,9 +9,9 @@ namespace WindowsFirewallHelper
     public class FirewallWASProfile : IFirewallProfile
     {
         private readonly FirewallWAS _firewall;
-        private readonly NetFwProfileType2 _profileType;
+        private readonly NET_FW_PROFILE_TYPE2 _profileType;
 
-        internal FirewallWASProfile(FirewallWAS firewall, NetFwProfileType2 profileType)
+        internal FirewallWASProfile(FirewallWAS firewall, NET_FW_PROFILE_TYPE2 profileType)
         {
             _profileType = profileType;
             _firewall = firewall;
@@ -28,28 +28,28 @@ namespace WindowsFirewallHelper
         /// <inheritdoc />
         public FirewallAction DefaultInboundAction
         {
-            get => _firewall.UnderlyingObject.get_DefaultInboundAction(_profileType) == NetFwAction.Allow
+            get => _firewall.UnderlyingObject.get_DefaultInboundAction(_profileType) == NET_FW_ACTION.NET_FW_ACTION_ALLOW
                 ? FirewallAction.Allow
                 : FirewallAction.Block;
             set => _firewall.UnderlyingObject.set_DefaultInboundAction(
                 _profileType,
                 value == FirewallAction.Allow
-                    ? NetFwAction.Allow
-                    : NetFwAction.Block
+                    ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
+                    : NET_FW_ACTION.NET_FW_ACTION_BLOCK
             );
         }
 
         /// <inheritdoc />
         public FirewallAction DefaultOutboundAction
         {
-            get => _firewall.UnderlyingObject.get_DefaultOutboundAction(_profileType) == NetFwAction.Allow
+            get => _firewall.UnderlyingObject.get_DefaultOutboundAction(_profileType) == NET_FW_ACTION.NET_FW_ACTION_ALLOW
                 ? FirewallAction.Allow
                 : FirewallAction.Block;
             set => _firewall.UnderlyingObject.set_DefaultOutboundAction(
                 _profileType,
                 value == FirewallAction.Allow
-                    ? NetFwAction.Allow
-                    : NetFwAction.Block
+                    ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
+                    : NET_FW_ACTION.NET_FW_ACTION_BLOCK
             );
         }
 
@@ -63,10 +63,10 @@ namespace WindowsFirewallHelper
         /// <inheritdoc />
         public bool IsActive
         {
-            get => (NetFwProfileType2) _firewall.UnderlyingObject.CurrentProfileTypes ==
-                   NetFwProfileType2.All ||
+            get => (NET_FW_PROFILE_TYPE2) _firewall.UnderlyingObject.CurrentProfileTypes ==
+                   NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL ||
                    // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
-                   ((NetFwProfileType2) _firewall.UnderlyingObject.CurrentProfileTypes & _profileType) == _profileType;
+                   ((NET_FW_PROFILE_TYPE2) _firewall.UnderlyingObject.CurrentProfileTypes & _profileType) == _profileType;
         }
 
         /// <inheritdoc />
@@ -81,7 +81,7 @@ namespace WindowsFirewallHelper
         {
             get
             {
-                if (_profileType == NetFwProfileType2.All)
+                if (_profileType == NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_ALL)
                 {
                     throw new ArgumentOutOfRangeException();
                 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using WindowsFirewallHelper.Addresses;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.InternalHelpers;
 
@@ -48,7 +48,7 @@ namespace WindowsFirewallHelper.FirewallRules
             FirewallAction action,
             FirewallDirection direction,
             FirewallProfiles profiles) :
-            this(ComHelper.CreateInstance<INetFwRule>())
+            this(new INetFwRule())
         {
             Name = name;
             Action = action;
@@ -258,12 +258,12 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <inheritdoc />
         public FirewallAction Action
         {
-            get => UnderlyingObject.Action == NetFwAction.Allow
+            get => UnderlyingObject.Action == NET_FW_ACTION.NET_FW_ACTION_ALLOW
                 ? FirewallAction.Allow
                 : FirewallAction.Block;
             set => UnderlyingObject.Action = value == FirewallAction.Allow
-                ? NetFwAction.Allow
-                : NetFwAction.Block;
+                ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
+                : NET_FW_ACTION.NET_FW_ACTION_BLOCK;
         }
 
         /// <inheritdoc />
@@ -276,12 +276,12 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <inheritdoc />
         public FirewallDirection Direction
         {
-            get => UnderlyingObject.Direction == NetFwRuleDirection.Inbound
+            get => UnderlyingObject.Direction == NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_IN
                 ? FirewallDirection.Inbound
                 : FirewallDirection.Outbound;
             set => UnderlyingObject.Direction = value == FirewallDirection.Inbound
-                ? NetFwRuleDirection.Inbound
-                : NetFwRuleDirection.Outbound;
+                ? NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_IN
+                : NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_OUT;
         }
 
         /// <inheritdoc />
@@ -469,7 +469,7 @@ namespace WindowsFirewallHelper.FirewallRules
                     FirewallProfiles.Public);
 
             set => UnderlyingObject.Profiles =
-                (int) (value &
+                (NET_FW_PROFILE_TYPE2) (value &
                        (
                            FirewallProfiles.Domain |
                            FirewallProfiles.Private |
@@ -648,7 +648,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 hashCode = hashCode * 467 + (UnderlyingObject.IcmpTypesAndCodes?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.InterfaceTypes?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.serviceName?.GetHashCode() ?? 0);
-                hashCode = hashCode * 467 + UnderlyingObject.Profiles;
+                hashCode = hashCode * 467 + (int)UnderlyingObject.Profiles;
                 hashCode = hashCode * 467 + UnderlyingObject.Protocol;
                 hashCode = hashCode * 467 + UnderlyingObject.Enabled.GetHashCode();
                 hashCode = hashCode * 467 + UnderlyingObject.EdgeTraversal.GetHashCode();

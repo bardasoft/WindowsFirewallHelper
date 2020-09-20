@@ -1,4 +1,4 @@
-﻿using WindowsFirewallHelper.COMInterop;
+﻿using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -10,11 +10,11 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     Inbound data
         /// </summary>
-        Inbound = NetFwRuleDirection.Inbound,
+        Inbound = NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_IN,
 
         /// <summary>
         ///     Outbound data
         /// </summary>
-        Outbound = NetFwRuleDirection.Outbound
+        Outbound = NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_OUT
     }
 }

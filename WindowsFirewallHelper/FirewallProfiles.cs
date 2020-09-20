@@ -1,5 +1,5 @@
 ﻿using System;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -12,16 +12,16 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     Domain Profile
         /// </summary>
-        Domain = NetFwProfileType2.Domain,
+        Domain = NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_DOMAIN,
 
         /// <summary>
         ///     Private Profile
         /// </summary>
-        Private = NetFwProfileType2.Private,
+        Private = NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_PRIVATE,
 
         /// <summary>
         ///     Public Profile
         /// </summary>
-        Public = NetFwProfileType2.Public
+        Public = NET_FW_PROFILE_TYPE2.NET_FW_PROFILE2_PUBLIC
     }
 }

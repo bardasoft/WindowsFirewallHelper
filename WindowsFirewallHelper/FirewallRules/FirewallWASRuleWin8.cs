@@ -1,5 +1,5 @@
 ﻿using System;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.InternalHelpers;
 
 namespace WindowsFirewallHelper.FirewallRules
@@ -84,7 +84,7 @@ namespace WindowsFirewallHelper.FirewallRules
         {
             get
             {
-                if (!Enum.IsDefined(typeof(IPSecSecurityLevel), UnderlyingObject.SecureFlags))
+                if (!Enum.IsDefined(typeof(NET_FW_AUTHENTICATE_TYPE), UnderlyingObject.SecureFlags))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -98,7 +98,7 @@ namespace WindowsFirewallHelper.FirewallRules
                     throw new ArgumentOutOfRangeException();
                 }
 
-                UnderlyingObject.SecureFlags = (int) value;
+                UnderlyingObject.SecureFlags = (NET_FW_AUTHENTICATE_TYPE) value;
             }
         }
 
@@ -222,7 +222,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 hashCode = hashCode * 467 + (UnderlyingObject.RemoteMachineAuthorizedList?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.RemoteUserAuthorizedList?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.LocalUserOwner?.GetHashCode() ?? 0);
-                hashCode = hashCode * 467 + UnderlyingObject.SecureFlags;
+                hashCode = hashCode * 467 + (int)UnderlyingObject.SecureFlags;
 
                 return hashCode;
             }

@@ -1,4 +1,4 @@
-﻿using WindowsFirewallHelper.COMInterop;
+﻿using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper
 {
@@ -10,16 +10,16 @@ namespace WindowsFirewallHelper
         /// <summary>
         ///     All scopes
         /// </summary>
-        All = NetFwScope.All,
+        All = NET_FW_SCOPE.NET_FW_SCOPE_ALL,
 
         /// <summary>
         ///     Local subnet only
         /// </summary>
-        LocalSubnet = NetFwScope.LocalSubnet,
+        LocalSubnet = NET_FW_SCOPE.NET_FW_SCOPE_LOCAL_SUBNET,
 
         /// <summary>
         ///     Specific list of addresses
         /// </summary>
-        Specific = NetFwScope.Custom
+        Specific = NET_FW_SCOPE.NET_FW_SCOPE_CUSTOM
     }
 }

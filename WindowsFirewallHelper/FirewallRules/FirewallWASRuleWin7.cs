@@ -1,5 +1,5 @@
 ﻿using System;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.InternalHelpers;
 
 namespace WindowsFirewallHelper.FirewallRules
@@ -75,7 +75,7 @@ namespace WindowsFirewallHelper.FirewallRules
         {
             get
             {
-                if (!Enum.IsDefined(typeof(EdgeTraversalAction), UnderlyingObject.EdgeTraversalOptions))
+                if (!Enum.IsDefined(typeof(NET_FW_EDGE_TRAVERSAL_TYPE), UnderlyingObject.EdgeTraversalOptions))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -89,7 +89,7 @@ namespace WindowsFirewallHelper.FirewallRules
                     throw new ArgumentOutOfRangeException();
                 }
 
-                UnderlyingObject.EdgeTraversalOptions = (int) value;
+                UnderlyingObject.EdgeTraversalOptions = (NET_FW_EDGE_TRAVERSAL_TYPE) value;
             }
         }
 
@@ -164,7 +164,7 @@ namespace WindowsFirewallHelper.FirewallRules
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = hashCode * 467 + UnderlyingObject.EdgeTraversalOptions;
+                hashCode = hashCode * 467 + (int)UnderlyingObject.EdgeTraversalOptions;
 
                 return hashCode;
             }

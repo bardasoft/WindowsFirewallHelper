@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.InternalHelpers;
 
 namespace WindowsFirewallHelper
@@ -23,7 +23,7 @@ namespace WindowsFirewallHelper
                 throw new NotSupportedException();
             }
 
-            UnderlyingObject = ComHelper.CreateInstance<INetFwProduct>();
+            UnderlyingObject = new INetFwProduct();
             Name = name;
         }
 

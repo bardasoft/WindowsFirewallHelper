@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.InternalHelpers.Collections;
 
 namespace WindowsFirewallHelper.Collections
@@ -51,12 +51,6 @@ namespace WindowsFirewallHelper.Collections
         protected override int GetCollectionKey(FirewallProduct managed)
         {
             throw new InvalidOperationException();
-        }
-
-        /// <inheritdoc />
-        protected override IEnumVARIANT GetEnumVariant()
-        {
-            return NativeEnumerable.GetEnumeratorVariant();
         }
 
         /// <inheritdoc />

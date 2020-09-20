@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.FirewallRules;
 
 namespace WindowsFirewallHelper.Collections
@@ -232,7 +232,7 @@ namespace WindowsFirewallHelper.Collections
         }
 
         /// <inheritdoc />
-        public FirewallLegacyPortRule this[ushort portNumber, NetFwIPProtocol protocol]
+        public FirewallLegacyPortRule this[ushort portNumber, NET_FW_IP_PROTOCOL protocol]
         {
             get
             {
@@ -252,7 +252,7 @@ namespace WindowsFirewallHelper.Collections
         }
 
         /// <inheritdoc />
-        public bool Remove(ushort portNumber, NetFwIPProtocol protocol)
+        public bool Remove(ushort portNumber, NET_FW_IP_PROTOCOL protocol)
         {
             var key = new FirewallLegacyPortCollectionKey(portNumber, protocol);
 

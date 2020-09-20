@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using WindowsFirewallHelper.COMInterop;
+using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.FirewallRules;
 
 namespace WindowsFirewallHelper.Collections
@@ -26,7 +26,7 @@ namespace WindowsFirewallHelper.Collections
         /// <param name="portNumber">The rule's port number</param>
         /// <param name="protocol">The rule's protocol</param>
         /// <returns>An instance of the <see cref="FirewallLegacyPortRule" /> class on success or null on failure</returns>
-        FirewallLegacyPortRule this[ushort portNumber, NetFwIPProtocol protocol] { get; }
+        FirewallLegacyPortRule this[ushort portNumber, NET_FW_IP_PROTOCOL protocol] { get; }
 
         /// <summary>
         ///     Removes a legacy port rule using the port number and the protocol
@@ -34,7 +34,7 @@ namespace WindowsFirewallHelper.Collections
         /// <param name="portNumber">The rule's port number</param>
         /// <param name="protocol">The rule's protocol</param>
         /// <returns>Returns a <see cref="bool" /> value indicating the success of the operation</returns>
-        bool Remove(ushort portNumber, NetFwIPProtocol protocol);
+        bool Remove(ushort portNumber, NET_FW_IP_PROTOCOL protocol);
 
         /// <summary>
         ///     Removes a legacy application rule using the full application path
