@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using WindowsFirewallHelper.Addresses;
-using static Vanara.PInvoke.FirewallApi;
 using WindowsFirewallHelper.Exceptions;
 using WindowsFirewallHelper.InternalHelpers;
+using static Vanara.PInvoke.FirewallApi;
 
 namespace WindowsFirewallHelper.FirewallRules
 {
@@ -30,10 +30,7 @@ namespace WindowsFirewallHelper.FirewallRules
             string filename,
             FirewallAction action,
             FirewallDirection direction,
-            FirewallProfiles profiles) : this(name, action, direction, profiles)
-        {
-            ApplicationName = filename;
-        }
+            FirewallProfiles profiles) : this(name, action, direction, profiles) => ApplicationName = filename;
 
         /// <summary>
         ///     Creates a new general rule for Windows Firewall with Advanced Security
@@ -74,13 +71,10 @@ namespace WindowsFirewallHelper.FirewallRules
             FirewallProfiles profiles) : this(name, action, direction, profiles)
         {
             Protocol = FirewallProtocol.TCP;
-            LocalPorts = new[] {port};
+            LocalPorts = new[] { port };
         }
 
-        internal FirewallWASRule(INetFwRule rule)
-        {
-            UnderlyingObject = rule;
-        }
+        internal FirewallWASRule(INetFwRule rule) => UnderlyingObject = rule;
 
         /// <summary>
         ///     Gets or sets the description string of this rule
@@ -103,18 +97,12 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <summary>
         ///     Gets resolved description string of this rule
         /// </summary>
-        public string FriendlyDescription
-        {
-            get => NativeHelper.ResolveStringResource(Description);
-        }
+        public string FriendlyDescription => NativeHelper.ResolveStringResource(Description);
 
         /// <summary>
         ///     Gets or sets the rule grouping string
         /// </summary>
-        public string FriendlyGrouping
-        {
-            get => NativeHelper.ResolveStringResource(Grouping);
-        }
+        public string FriendlyGrouping => NativeHelper.ResolveStringResource(Grouping);
 
         /// <summary>
         ///     Gets or sets the rule grouping string
@@ -150,31 +138,14 @@ namespace WindowsFirewallHelper.FirewallRules
         /// </summary>
         public NetworkInterface[] Interfaces
         {
-            get
-            {
-                if (!(UnderlyingObject.Interfaces is IEnumerable))
-                {
-                    return new NetworkInterface[0];
-                }
-
-                return
-                    NetworkInterfaceHelper.StringToInterfaces(
-                        ((IEnumerable) UnderlyingObject.Interfaces)
-                        .Cast<object>()
-                        .Select((o, i) => o?.ToString())
-                        .ToArray()
-                    );
-            }
+            get => NetworkInterfaceHelper.StringToInterfaces(UnderlyingObject.GetInterfaces());
             set => UnderlyingObject.Interfaces = NetworkInterfaceHelper.InterfacesToString(value);
         }
 
         /// <summary>
         ///     Returns a Boolean value indicating if these class is available in the current machine
         /// </summary>
-        public static bool IsSupported
-        {
-            get => ComHelper.IsSupported<INetFwRule>();
-        }
+        public static bool IsSupported => ComHelper.IsSupported<INetFwRule>();
 
         /// <summary>
         ///     Gets or sets the network interfaces that this rule applies to by type
@@ -239,31 +210,24 @@ namespace WindowsFirewallHelper.FirewallRules
                 return true;
             }
 
-            return ((IEnumerable) UnderlyingObject.Interfaces)
+            return ((IEnumerable)UnderlyingObject.Interfaces)
                 .Cast<object>()
                 .Select((o, i) => o?.ToString())
                 .SequenceEqual(
-                    ((IEnumerable) other.UnderlyingObject.Interfaces)
+                    ((IEnumerable)other.UnderlyingObject.Interfaces)
                     .Cast<object>()
                     .Select((o, i) => o?.ToString())
                 );
         }
 
         /// <inheritdoc />
-        public bool Equals(IFirewallRule other)
-        {
-            return Equals(other as FirewallWASRule);
-        }
+        public bool Equals(IFirewallRule other) => Equals(other as FirewallWASRule);
 
         /// <inheritdoc />
         public FirewallAction Action
         {
-            get => UnderlyingObject.Action == NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                ? FirewallAction.Allow
-                : FirewallAction.Block;
-            set => UnderlyingObject.Action = value == FirewallAction.Allow
-                ? NET_FW_ACTION.NET_FW_ACTION_ALLOW
-                : NET_FW_ACTION.NET_FW_ACTION_BLOCK;
+            get => (FirewallAction)UnderlyingObject.Action;
+            set => UnderlyingObject.Action = (NET_FW_ACTION)value;
         }
 
         /// <inheritdoc />
@@ -276,19 +240,12 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <inheritdoc />
         public FirewallDirection Direction
         {
-            get => UnderlyingObject.Direction == NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_IN
-                ? FirewallDirection.Inbound
-                : FirewallDirection.Outbound;
-            set => UnderlyingObject.Direction = value == FirewallDirection.Inbound
-                ? NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_IN
-                : NET_FW_RULE_DIRECTION.NET_FW_RULE_DIR_OUT;
+            get => (FirewallDirection)UnderlyingObject.Direction;
+            set => UnderlyingObject.Direction = (NET_FW_RULE_DIRECTION)value;
         }
 
         /// <inheritdoc />
-        public string FriendlyName
-        {
-            get => NativeHelper.ResolveStringResource(Name);
-        }
+        public string FriendlyName => NativeHelper.ResolveStringResource(Name);
 
         /// <inheritdoc />
         public bool IsEnable
@@ -309,7 +266,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 }
                 catch (COMException exception)
                 {
-                    if ((uint) exception.ErrorCode == 0xD000000D)
+                    if ((uint)exception.ErrorCode == 0xD000000D)
                     {
                         throw new ArgumentException(
                             "An unspecified, multicast, broadcast or loopback IPv6 address was specified.", exception);
@@ -463,13 +420,13 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <inheritdoc />
         public FirewallProfiles Profiles
         {
-            get => (FirewallProfiles) UnderlyingObject.Profiles &
+            get => (FirewallProfiles)UnderlyingObject.Profiles &
                    (FirewallProfiles.Domain |
                     FirewallProfiles.Private |
                     FirewallProfiles.Public);
 
             set => UnderlyingObject.Profiles =
-                (NET_FW_PROFILE_TYPE2) (value &
+                (NET_FW_PROFILE_TYPE2)(value &
                        (
                            FirewallProfiles.Domain |
                            FirewallProfiles.Private |
@@ -513,7 +470,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 }
                 catch (COMException exception)
                 {
-                    if ((uint) exception.ErrorCode == 0xD000000D)
+                    if ((uint)exception.ErrorCode == 0xD000000D)
                     {
                         throw new ArgumentException(
                             "An unspecified, multicast, broadcast or loopback IPv6 address was specified.",
@@ -557,7 +514,7 @@ namespace WindowsFirewallHelper.FirewallRules
             {
                 if (RemoteAddresses.Length <= 1)
                 {
-                    foreach (var address in RemoteAddresses)
+                    foreach (IAddress address in RemoteAddresses)
                     {
                         if (SingleIP.Any.Equals(address))
                         {
@@ -578,11 +535,11 @@ namespace WindowsFirewallHelper.FirewallRules
                 switch (value)
                 {
                     case FirewallScope.All:
-                        RemoteAddresses = new IAddress[] {SingleIP.Any};
+                        RemoteAddresses = new IAddress[] { SingleIP.Any };
 
                         break;
                     case FirewallScope.LocalSubnet:
-                        RemoteAddresses = new IAddress[] {new LocalSubnet()};
+                        RemoteAddresses = new IAddress[] { new LocalSubnet() };
 
                         break;
                     default:
@@ -607,10 +564,7 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <param name="left">A <see cref="FirewallWASRule" /> object</param>
         /// <param name="right">A <see cref="FirewallWASRule" /> object</param>
         /// <returns>true if two sides are equal; otherwise false</returns>
-        public static bool operator ==(FirewallWASRule left, FirewallWASRule right)
-        {
-            return Equals(left, right) || left?.Equals(right) == true;
-        }
+        public static bool operator ==(FirewallWASRule left, FirewallWASRule right) => Equals(left, right) || left?.Equals(right) == true;
 
         /// <summary>
         ///     Compares two <see cref="FirewallWASRule" /> objects for inequality
@@ -618,16 +572,10 @@ namespace WindowsFirewallHelper.FirewallRules
         /// <param name="left">A <see cref="FirewallWASRule" /> object</param>
         /// <param name="right">A <see cref="FirewallWASRule" /> object</param>
         /// <returns>true if two sides are not equal; otherwise false</returns>
-        public static bool operator !=(FirewallWASRule left, FirewallWASRule right)
-        {
-            return !(left == right);
-        }
+        public static bool operator !=(FirewallWASRule left, FirewallWASRule right) => !(left == right);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as IFirewallRule);
-        }
+        public override bool Equals(object obj) => Equals(obj as IFirewallRule);
 
         /// <inheritdoc />
         public override int GetHashCode()
@@ -635,8 +583,8 @@ namespace WindowsFirewallHelper.FirewallRules
             unchecked
             {
                 var hashCode = 132619;
-                hashCode = hashCode * 467 + (int) UnderlyingObject.Action;
-                hashCode = hashCode * 467 + (int) UnderlyingObject.Direction;
+                hashCode = hashCode * 467 + (int)UnderlyingObject.Action;
+                hashCode = hashCode * 467 + (int)UnderlyingObject.Direction;
                 hashCode = hashCode * 467 + (UnderlyingObject.Name?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.RemoteAddresses?.GetHashCode() ?? 0);
                 hashCode = hashCode * 467 + (UnderlyingObject.RemotePorts?.GetHashCode() ?? 0);
@@ -652,7 +600,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 hashCode = hashCode * 467 + UnderlyingObject.Protocol;
                 hashCode = hashCode * 467 + UnderlyingObject.Enabled.GetHashCode();
                 hashCode = hashCode * 467 + UnderlyingObject.EdgeTraversal.GetHashCode();
-                var interfaces = (UnderlyingObject.Interfaces as IEnumerable)?.Cast<object>();
+                System.Collections.Generic.IEnumerable<object> interfaces = (UnderlyingObject.Interfaces as IEnumerable)?.Cast<object>();
 
                 if (interfaces != null)
                 {
@@ -667,7 +615,7 @@ namespace WindowsFirewallHelper.FirewallRules
                 }
                 else
                 {
-                    hashCode = hashCode * 467;
+                    hashCode *= 467;
                 }
 
                 return hashCode;
@@ -675,18 +623,12 @@ namespace WindowsFirewallHelper.FirewallRules
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return FriendlyName;
-        }
+        public override string ToString() => FriendlyName;
 
         /// <summary>
         ///     Returns the underlying COM object
         /// </summary>
         /// <returns>The underlying COM object</returns>
-        public INetFwRule GetCOMObject()
-        {
-            return UnderlyingObject;
-        }
+        public INetFwRule GetCOMObject() => UnderlyingObject;
     }
 }
