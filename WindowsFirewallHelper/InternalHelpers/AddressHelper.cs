@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using WindowsFirewallHelper.Addresses;
 
 namespace WindowsFirewallHelper.InternalHelpers
@@ -10,21 +12,9 @@ namespace WindowsFirewallHelper.InternalHelpers
     {
         public static string AddressesToString(IAddress[] rules)
         {
-            var addresses = new List<string>();
+            var addresses = rules.Select(r => r.ToString()).ToArray();
 
-            foreach (var address in rules)
-            {
-                var addressAsString = address.ToString();
-
-                if (addressAsString == "*")
-                {
-                    return "*";
-                }
-
-                addresses.Add(addressAsString);
-            }
-
-            return string.Join(",", addresses.ToArray());
+            return addresses.Any(s => s == "*") ? "*" : string.Join(",", addresses);
         }
 
         // ReSharper disable once MethodNameNotMeaningful

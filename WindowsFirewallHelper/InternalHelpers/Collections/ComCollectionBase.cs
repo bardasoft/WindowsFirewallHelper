@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace WindowsFirewallHelper.InternalHelpers.Collections
 {
@@ -32,43 +31,69 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
             NativeEnumerable = nativeEnumerable;
         }
 
-        /// <inheritdoc />
-        public virtual void CopyTo(Array array, int index)
+        /// <inheritdoc cref="ICollection.Count"/>
+        public virtual int Count
         {
-            foreach (var target in this)
+            get
             {
-                array.SetValue(target, index);
-                index++;
+                try
+                {
+                    return InternalCount();
+                }
+                catch (COMException e)
+                {
+                    throw new NotSupportedException("This property is not supported with the passed COM object.", e);
+                }
             }
         }
 
-        /// <inheritdoc cref="ICollection.IsSynchronized" />
-        bool ICollection.IsSynchronized
+        /// <inheritdoc/>
+        public abstract bool IsReadOnly { get; }
+
+        /// <inheritdoc cref="ICollection.IsSynchronized"/>
+        bool ICollection.IsSynchronized => false;
+
+        /// <inheritdoc cref="ICollection.SyncRoot"/>
+        object ICollection.SyncRoot => NativeEnumerable;
+
+        /// <inheritdoc/>
+        public virtual TManaged this[TKey key]
         {
-            get => false;
+            get
+            {
+                if (key == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                try
+                {
+                    TNative native = InternalItem(key);
+
+                    if (native == null)
+                    {
+                        return null;
+                    }
+
+                    return ConvertNativeToManaged(native);
+                }
+                catch (COMException e)
+                {
+                    throw new NotSupportedException("This operation is not supported with the passed COM object.", e);
+                }
+            }
         }
 
-        /// <inheritdoc cref="ICollection.SyncRoot" />
-        object ICollection.SyncRoot
-        {
-            get => NativeEnumerable;
-        }
-
-        /// <inheritdoc />
+        /// <inheritdoc/>
         // ReSharper disable once MethodNameNotMeaningful
         public virtual void Add(TManaged item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
             if (IsReadOnly)
             {
                 throw new InvalidOperationException("Collection is readonly.");
             }
 
-            var nativeObject = ConvertManagedToNative(item);
+            var nativeObject = ConvertManagedToNative(item ?? throw new ArgumentNullException(nameof(item)));
 
             if (nativeObject == null)
             {
@@ -85,44 +110,32 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
             }
         }
 
-        /// <inheritdoc />
-        public virtual void Clear()
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc/>
+        public virtual void Clear() => throw new NotSupportedException();
 
-        /// <inheritdoc />
-        public virtual bool Contains(TManaged item)
-        {
-            return this.Any(target => target == item);
-        }
+        /// <inheritdoc/>
+        public virtual bool Contains(TManaged item) => this.Any(target => target == item);
 
-        /// <inheritdoc />
-        public virtual void CopyTo(TManaged[] array, int arrayIndex)
-        {
-            CopyTo(array as Array, arrayIndex);
-        }
+        /// <inheritdoc/>
+        public virtual bool Contains(TKey key) => this.Select(GetCollectionKey).Any(key1 => key1.Equals(key));
 
-        /// <inheritdoc cref="ICollection.Count" />
-        public virtual int Count
+        /// <inheritdoc/>
+        public virtual void CopyTo(Array array, int index)
         {
-            get
+            foreach (TManaged target in this)
             {
-                try
-                {
-                    return InternalCount();
-                }
-                catch (COMException e)
-                {
-                    throw new NotSupportedException("This property is not supported with the passed COM object.", e);
-                }
+                array.SetValue(target, index);
+                index++;
             }
         }
 
-        /// <inheritdoc />
-        public abstract bool IsReadOnly { get; }
+        /// <inheritdoc/>
+        public virtual void CopyTo(TManaged[] array, int arrayIndex) => CopyTo(array as Array, arrayIndex);
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
+        public virtual IEnumerator<TManaged> GetEnumerator() => NativeEnumerable.OfType<TNative>().Select(ConvertNativeToManaged).GetEnumerator();
+
+        /// <inheritdoc/>
         public virtual bool Remove(TManaged item)
         {
             if (item == null)
@@ -130,7 +143,7 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
                 throw new ArgumentNullException(nameof(item));
             }
 
-            var key = GetCollectionKey(item);
+            TKey key = GetCollectionKey(item);
 
             if (key == null)
             {
@@ -142,41 +155,7 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
             return true;
         }
 
-        /// <inheritdoc />
-        public virtual bool Contains(TKey key)
-        {
-            return this.Select(GetCollectionKey).Any(key1 => key1.Equals(key));
-        }
-
-        /// <inheritdoc />
-        public virtual TManaged this[TKey key]
-        {
-            get
-            {
-                if (key == null)
-                {
-                    throw new ArgumentNullException();
-                }
-
-                try
-                {
-                    var native = InternalItem(key);
-
-                    if (native == null)
-                    {
-                        return null;
-                    }
-
-                    return ConvertNativeToManaged(native);
-                }
-                catch (COMException e)
-                {
-                    throw new NotSupportedException("This operation is not supported with the passed COM object.", e);
-                }
-            }
-        }
-
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public virtual bool Remove(TKey key)
         {
             if (key == null)
@@ -201,24 +180,21 @@ namespace WindowsFirewallHelper.InternalHelpers.Collections
             }
         }
 
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <inheritdoc />
-        public virtual IEnumerator<TManaged> GetEnumerator()
-        {
-            return NativeEnumerable.OfType<TNative>().Select(ConvertNativeToManaged).GetEnumerator();
-        }
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         protected abstract TNative ConvertManagedToNative(TManaged managed);
+
         protected abstract TManaged ConvertNativeToManaged(TNative native);
+
         protected abstract TKey GetCollectionKey(TManaged managed);
+
         protected abstract void InternalAdd(TNative native);
+
         protected abstract int InternalCount();
+
         protected abstract TNative InternalItem(TKey key);
+
         protected abstract void InternalRemove(TKey key);
     }
 }

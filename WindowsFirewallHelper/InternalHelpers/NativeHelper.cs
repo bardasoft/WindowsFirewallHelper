@@ -17,10 +17,8 @@ namespace WindowsFirewallHelper.InternalHelpers
             try
             {
                 var buffer = new StringBuilder(8 * 1024);
-                var result = SHLoadIndirectString(Environment.ExpandEnvironmentVariables(str), buffer,
-                    buffer.Capacity, IntPtr.Zero);
-
-                if (result == 0)
+                if (0 == SHLoadIndirectString(Environment.ExpandEnvironmentVariables(str), buffer,
+                    buffer.Capacity, IntPtr.Zero))
                 {
                     str = buffer.ToString();
                 }
@@ -32,16 +30,22 @@ namespace WindowsFirewallHelper.InternalHelpers
                     {
                         var idString = str.Substring(idIndex + 1);
                         var fileName = Environment.ExpandEnvironmentVariables(str.Substring(1, idIndex - 1));
-                        var id = (uint) Math.Abs(int.Parse(idString));
-                        var handle = LoadLibrary(fileName);
-                        var size = LoadString(handle, id, buffer, buffer.Capacity);
-
-                        if (size > 0)
+                        var id = (uint)Math.Abs(int.Parse(idString));
+                        IntPtr handle = LoadLibrary(fileName);
+                        if (handle != IntPtr.Zero)
                         {
-                            str = buffer.ToString();
+                            try
+                            {
+                                if (LoadString(handle, id, buffer, buffer.Capacity) > 0)
+                                {
+                                    str = buffer.ToString();
+                                }
+                            }
+                            finally
+                            {
+                                FreeLibrary(handle);
+                            }
                         }
-
-                        FreeLibrary(handle);
                     }
                 }
             }
